@@ -1,4 +1,3 @@
-import { useThemeWithoutDefault } from '@mui/system';
 import { firebaseDb } from './firebase';
 
 export class FirebaseList {
@@ -37,23 +36,23 @@ export class FirebaseList {
     let ref = firebaseDb.ref(this._path);
     let initialized = false;
     let list = [];
-    ref.once('value', (value) => {
+    ref.once('value', () => {
       initialized = true;
-      emit(this._actions.onload(list));
+      emit(this._actions.onLoad(list));
     });
-    ref.on('childAdded', child => {
+    ref.on('childAdded', snapshot => {
       if (initialized) {
-        emit(this._actions.onAdd(this.unwrapSnapshot(child)));
+        emit(this._actions.onAdd(this.unwrapSnapshot(snapshot)));
       }
       else {
-        list.push(this.unwrapSnapshot(child));
+        list.push(this.unwrapSnapshot(snapshot));
       }
     });
-    ref.on('chilChange', child => {
-      emit(this._actions.onChange(this.unwrapSnapshot(child)));
+    ref.on('chilChange', snapshot => {
+      emit(this._actions.onChange(this.unwrapSnapshot(snapshot)));
     });
-    ref.on('childRemoved', child => {
-      emit(this._actions.onRemove(this.unwrapSnapshot(child)));
+    ref.on('childRemoved', snapshot => {
+      emit(this._actions.onRemove(this.unwrapSnapshot(snapshot)));
     });
     this._unsubscribe = () => ref.off();
   }
